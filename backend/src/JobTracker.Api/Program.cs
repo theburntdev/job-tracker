@@ -1,3 +1,6 @@
+using JobTracker.Api.Endpoints;
+using JobTracker.Application.Jobs.GetJobs;
+using JobTracker.Infrastructure;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -14,7 +17,11 @@ try
 
     builder.Services.AddOpenApi();
     builder.Services.AddMediatR(cfg =>
-        cfg.RegisterServicesFromAssemblyContaining<Program>());
+        cfg.RegisterServicesFromAssemblies(
+            typeof(Program).Assembly,
+            typeof(GetJobsQueryHandler).Assembly));
+
+    builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();
 
@@ -22,6 +29,8 @@ try
     {
         app.MapOpenApi();
     }
+
+    app.MapJobEndpoints();
 
     app.Run();
 }
