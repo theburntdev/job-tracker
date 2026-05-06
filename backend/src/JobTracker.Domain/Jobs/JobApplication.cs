@@ -18,6 +18,27 @@ public sealed class JobApplication
 
     private JobApplication() { }
 
+    public void Update(
+        string title,
+        string company,
+        string? location,
+        string? url,
+        string? description,
+        Stage stage,
+        DateTimeOffset? appliedAt,
+        DateTimeOffset? postedAt)
+    {
+        Title = title;
+        Company = company;
+        Location = location;
+        Url = url;
+        Description = description;
+        Stage = stage;
+        AppliedAt = appliedAt;
+        PostedAt = postedAt;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public static JobApplication Create(
         string title,
         string company,

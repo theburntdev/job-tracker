@@ -5,6 +5,7 @@ import { apiClient } from '../../lib/apiClient'
 import {
   type JobApplication,
   type CreateJobApplicationInput,
+  type UpdateJobApplicationInput,
   JobApplicationSchema,
 } from './types'
 
@@ -53,6 +54,17 @@ export function useDeleteJobApplication() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => apiClient.delete<void>(`/api/job-applications/${id}`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+    },
+  })
+}
+
+export function useUpdateJobApplication() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...input }: { id: string } & UpdateJobApplicationInput) =>
+      apiClient.put<JobApplication>(`/api/job-applications/${id}`, input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: QUERY_KEY })
     },

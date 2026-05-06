@@ -35,6 +35,66 @@ export interface paths {
             };
         };
         put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateJobApplicationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/job-applications/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["UpdateJobApplicationRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
         post?: never;
         delete?: never;
         options?: never;
@@ -46,6 +106,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        CreateJobApplicationRequest: {
+            title: string;
+            company: string;
+            location: null | string;
+            url: null | string;
+            description: null | string;
+            stage: components["schemas"]["Stage"];
+            /** Format: date-time */
+            appliedAt: null | string;
+            /** Format: date-time */
+            postedAt: null | string;
+        };
         JobApplicationResponse: {
             /** Format: uuid */
             id: string;
@@ -75,6 +147,18 @@ export interface components {
         };
         /** @enum {unknown} */
         Stage: "Applied" | "Screening" | "Interviewing" | "Offer" | "Rejected" | "Withdrawn";
+        UpdateJobApplicationRequest: {
+            title: string;
+            company: string;
+            location: null | string;
+            url: null | string;
+            description: null | string;
+            stage: components["schemas"]["Stage"];
+            /** Format: date-time */
+            appliedAt: null | string;
+            /** Format: date-time */
+            postedAt: null | string;
+        };
     };
     responses: never;
     parameters: never;

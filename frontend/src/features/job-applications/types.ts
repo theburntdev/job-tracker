@@ -38,3 +38,15 @@ export const CreateJobApplicationSchema = z.object({
   stage: Stage,
 })
 export type CreateJobApplicationInput = z.infer<typeof CreateJobApplicationSchema>
+
+export const UpdateJobApplicationSchema = z.object({
+  title: z.string().min(1),
+  company: z.string().min(1),
+  location: z.string().nullable(),
+  url: z.string().nullable(),
+  description: z.string().nullable(),
+  stage: Stage,
+  appliedAt: z.string().nullable(),
+  postedAt: z.string().nullable(),
+})
+export type UpdateJobApplicationInput = z.infer<typeof UpdateJobApplicationSchema>
