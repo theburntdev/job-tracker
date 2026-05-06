@@ -10,7 +10,7 @@ public sealed class GetJobApplicationsQueryHandler(IJobApplicationRepository rep
 
     public async Task<Page<JobApplicationResponse>> Handle(GetJobApplicationsQuery query, CancellationToken ct)
     {
-        var page = await repository.GetAllAsync(query.Page, query.PageSize, ct);
+        var page = await repository.GetPagedAsync(query.Page, query.PageSize, query.SortBy, query.SortDir, ct);
         return new Page<JobApplicationResponse>(
             page.Items.Select(_mapper.ToResponse).ToList().AsReadOnly(),
             page.Total,

@@ -16,12 +16,24 @@ internal sealed class JobApplicationRepository : IJobApplicationRepository
         => await _context.JobApplications.FirstOrDefaultAsync(j => j.Id == id, ct);
 
     public async Task<Page<JobApplication>> GetAllAsync(int page, int pageSize, CancellationToken ct = default)
+        => await GetPagedAsync(page, pageSize, "updatedAt", "desc", ct);
+
+    public async Task<Page<JobApplication>> GetPagedAsync(int page, int pageSize, string sortBy, string sortDir, CancellationToken ct = default)
     {
         var total = await _context.JobApplications.CountAsync(ct);
+
+        // EF Core's SQLite provider rejects DateTimeOffset in ORDER BY; bypass with raw SQL.
+        // col and dir are whitelist-controlled — no injection risk.
+        var col = sortBy == "appliedAt" ? "AppliedAt" : "UpdatedAt";
+        var dir = sortDir == "asc" ? "ASC" : "DESC";
+        var offset = (page - 1) * pageSize;
+
+        var sql = "SELECT * FROM \"JobApplications\" ORDER BY \"" + col + "\" " + dir
+                + " LIMIT " + pageSize + " OFFSET " + offset;
         var items = await _context.JobApplications
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
+            .FromSqlRaw(sql)
             .ToListAsync(ct);
+
         return new Page<JobApplication>(items, total, page, pageSize);
     }
 

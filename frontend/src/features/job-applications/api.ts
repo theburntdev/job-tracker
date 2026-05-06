@@ -21,20 +21,14 @@ const PageSchema: z.ZodType<BackendPage> = z.object({
   pageSize: z.union([z.number(), z.string()]),
 })
 
-export function useJobApplications() {
+export function useJobApplications(page = 1, sortBy = 'updatedAt', sortDir = 'desc') {
   return useQuery({
-    queryKey: QUERY_KEY,
+    queryKey: [...QUERY_KEY, page, sortBy, sortDir],
     queryFn: async () => {
-      const data = await apiClient.get<unknown>('/api/job-applications')
-      const items = PageSchema.parse(data).items
-      return items.slice().sort((a, b) => {
-        const aTime = a.appliedAt ? new Date(a.appliedAt).getTime() : null
-        const bTime = b.appliedAt ? new Date(b.appliedAt).getTime() : null
-        if (aTime !== null && bTime !== null) return bTime - aTime
-        if (aTime !== null) return -1
-        if (bTime !== null) return 1
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      })
+      const data = await apiClient.get<unknown>(
+        `/api/job-applications?page=${page}&pageSize=20&sortBy=${sortBy}&sortDir=${sortDir}`,
+      )
+      return PageSchema.parse(data)
     },
   })
 }

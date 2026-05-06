@@ -34,9 +34,11 @@ public static class JobApplicationEndpoints
             ISender mediator,
             CancellationToken ct,
             [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20) =>
+            [FromQuery] int pageSize = 20,
+            [FromQuery] string sortBy = "updatedAt",
+            [FromQuery] string sortDir = "desc") =>
         {
-            var result = await mediator.Send(new GetJobApplicationsQuery(page, pageSize), ct);
+            var result = await mediator.Send(new GetJobApplicationsQuery(page, pageSize, sortBy, sortDir), ct);
             return TypedResults.Ok(result);
         });
 
