@@ -26,3 +26,4 @@
 /backend/tests/JobTracker.Infrastructure.Tests/obj
 /backend/tests/JobTracker.Testing.Common/bin/Debug/net10.0
 /backend/tests/JobTracker.Testing.Common/obj
+frontend/node_modules/*

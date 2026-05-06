@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using JobTracker.Api.Endpoints;
 using JobTracker.Application.JobApplications.GetJobApplications;
 using JobTracker.Infrastructure;
@@ -21,13 +22,23 @@ try
             typeof(Program).Assembly,
             typeof(GetJobApplicationsQueryHandler).Assembly));
 
+    builder.Services.ConfigureHttpJsonOptions(options =>
+        options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
     builder.Services.AddInfrastructure(builder.Configuration);
+
+    builder.Services.AddCors(options =>
+        options.AddPolicy("Dev", policy =>
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()));
 
     var app = builder.Build();
 
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
+        app.UseCors("Dev");
     }
 
     app.MapJobApplicationEndpoints();

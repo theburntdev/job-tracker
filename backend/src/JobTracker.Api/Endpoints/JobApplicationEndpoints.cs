@@ -8,7 +8,7 @@ public static class JobApplicationEndpoints
 {
     public static IEndpointRouteBuilder MapJobApplicationEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/job-applications");
+        var group = app.MapGroup("api/job-applications");
 
         group.MapGet("", async (
             ISender mediator,

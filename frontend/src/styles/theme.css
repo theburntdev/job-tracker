@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand */
+  --color-brand-primary: oklch(0.60 0.15 250);
+  --color-brand-primary-hover: oklch(0.52 0.15 250);
+
+  /* Application stage statuses */
+  --color-status-applied: oklch(0.60 0.12 230);
+  --color-status-screened: oklch(0.60 0.10 200);
+  --color-status-interviewing: oklch(0.62 0.14 160);
+  --color-status-offer: oklch(0.62 0.14 140);
+  --color-status-rejected: oklch(0.55 0.15 20);
+
+  /* Surfaces */
+  --color-surface: oklch(0.97 0 0);
+  --color-surface-elevated: oklch(1 0 0);
+  --color-border: oklch(0.90 0 0);
+
+  /* Text */
+  --color-text-primary: oklch(0.15 0 0);
+  --color-text-secondary: oklch(0.45 0 0);
+  --color-text-muted: oklch(0.65 0 0);
+}

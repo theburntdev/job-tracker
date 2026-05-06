@@ -120,6 +120,40 @@ npm run build
   }
   ```
 
+## Backend type contract
+**Generated file**: `src/lib/api.types.gen.ts` — auto-generated from backend OpenAPI spec. Never edit by hand.
+
+**Regenerate** (backend must be running) whenever a backend DTO changes:
+```powershell
+npm run gen:api
+```
+
+**How to write a feature schema**: import the generated backend type and constrain the Zod schema with `satisfies`. TypeScript will error at compile time if the Zod schema diverges from the backend shape.
+```ts
+import type { components } from '../../lib/api.types.gen'
+
+type BackendJobApplication = components['schemas']['JobApplicationResponse']
+
+// TypeScript errors here if fields, types, or nullability don't match backend
+export const JobApplicationSchema = z.object({
+  id: z.string().uuid(),
+  company: z.string(),
+  ...
+}) satisfies z.ZodType<BackendJobApplication>
+
+export type JobApplication = z.infer<typeof JobApplicationSchema>
+```
+
+**Field name rules** (C# → JSON camelCase, enforced by backend `JsonStringEnumConverter`):
+- C# `string?` → `.nullish()` (JSON can be `null` or absent)
+- C# `string` → `.min(1)` required string
+- C# `DateTimeOffset` → `.datetime({ offset: true })`
+- C# `DateTimeOffset?` → `.datetime({ offset: true }).nullable()`
+- C# enums → string values (backend uses `JsonStringEnumConverter` globally)
+- C# `Page<T>` envelope → `{ items, total, pageNumber, pageSize }` — unwrap `.items` in `queryFn`
+
+**Commit `api.types.gen.ts`** — keeps CI typecheck green without requiring backend to run.
+
 ## Testing conventions
 - Test files co-located with source: `Button.tsx` → `Button.test.tsx` in same directory.
 - **Atoms**: test rendered output and prop variations. No mocking needed.
