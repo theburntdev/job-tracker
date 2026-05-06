@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using JobTracker.Api.Endpoints;
 using JobTracker.Application.JobApplications.GetJobApplications;
 using JobTracker.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -34,6 +35,12 @@ try
                   .AllowAnyMethod()));
 
     var app = builder.Build();
+
+    await using (var scope = app.Services.CreateAsyncScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+    }
 
     if (app.Environment.IsDevelopment())
     {

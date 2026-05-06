@@ -20,19 +20,22 @@ internal sealed class JobApplicationRepository : IJobApplicationRepository
 
     public async Task<Page<JobApplication>> GetPagedAsync(int page, int pageSize, string sortBy, string sortDir, CancellationToken ct = default)
     {
+        IQueryable<JobApplication> query = _context.JobApplications;
+        var ascending = string.Equals(sortDir, "asc", StringComparison.OrdinalIgnoreCase);
+        var byAppliedAt = string.Equals(sortBy, "appliedAt", StringComparison.OrdinalIgnoreCase);
+
+        if (byAppliedAt)
+            query = ascending
+                ? query.OrderBy(j => j.AppliedAt).ThenBy(j => j.Id)
+                : query.OrderByDescending(j => j.AppliedAt).ThenBy(j => j.Id);
+        else
+            query = ascending
+                ? query.OrderBy(j => j.UpdatedAt).ThenBy(j => j.Id)
+                : query.OrderByDescending(j => j.UpdatedAt).ThenBy(j => j.Id);
+
         var total = await _context.JobApplications.CountAsync(ct);
-
-        // EF Core's SQLite provider rejects DateTimeOffset in ORDER BY; bypass with raw SQL.
-        // col and dir are whitelist-controlled — no injection risk.
-        var col = sortBy == "appliedAt" ? "AppliedAt" : "UpdatedAt";
-        var dir = sortDir == "asc" ? "ASC" : "DESC";
         var offset = (page - 1) * pageSize;
-
-        var sql = "SELECT * FROM \"JobApplications\" ORDER BY \"" + col + "\" " + dir
-                + " LIMIT " + pageSize + " OFFSET " + offset;
-        var items = await _context.JobApplications
-            .FromSqlRaw(sql)
-            .ToListAsync(ct);
+        var items = await query.Skip(offset).Take(pageSize).ToListAsync(ct);
 
         return new Page<JobApplication>(items, total, page, pageSize);
     }

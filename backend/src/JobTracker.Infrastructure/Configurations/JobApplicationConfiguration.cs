@@ -37,5 +37,25 @@ internal sealed class JobApplicationConfiguration : IEntityTypeConfiguration<Job
 
         builder.Property(j => j.Stage)
             .IsRequired();
+
+        builder.Property(j => j.AppliedAt)
+            .HasConversion(
+                v => v.HasValue ? v.Value.ToUnixTimeMilliseconds() : (long?)null,
+                v => v.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(v.Value) : null);
+
+        builder.Property(j => j.PostedAt)
+            .HasConversion(
+                v => v.HasValue ? v.Value.ToUnixTimeMilliseconds() : (long?)null,
+                v => v.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(v.Value) : null);
+
+        builder.Property(j => j.CreatedAt)
+            .HasConversion(
+                v => v.ToUnixTimeMilliseconds(),
+                v => DateTimeOffset.FromUnixTimeMilliseconds(v));
+
+        builder.Property(j => j.UpdatedAt)
+            .HasConversion(
+                v => v.ToUnixTimeMilliseconds(),
+                v => DateTimeOffset.FromUnixTimeMilliseconds(v));
     }
 }
