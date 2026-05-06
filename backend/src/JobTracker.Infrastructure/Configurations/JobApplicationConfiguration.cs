@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace JobTracker.Infrastructure.Configurations;
 
-internal sealed class JobConfiguration : IEntityTypeConfiguration<Job>
+internal sealed class JobApplicationConfiguration : IEntityTypeConfiguration<JobApplication>
 {
-    public void Configure(EntityTypeBuilder<Job> builder)
+    public void Configure(EntityTypeBuilder<JobApplication> builder)
     {
-        builder.ToTable("Jobs");
+        builder.ToTable("JobApplications");
 
         builder.HasKey(j => j.Id);
 
         builder.Property(j => j.Id)
             .HasConversion(
                 id => id.Value,
-                value => new JobId(value));
+                value => new JobApplicationId(value));
 
         builder.Property(j => j.Title)
             .IsRequired()
@@ -34,5 +34,8 @@ internal sealed class JobConfiguration : IEntityTypeConfiguration<Job>
 
         builder.Property(j => j.Description)
             .HasMaxLength(2048);
+
+        builder.Property(j => j.Stage)
+            .IsRequired();
     }
 }

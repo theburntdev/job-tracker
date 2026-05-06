@@ -34,8 +34,7 @@ When you're working in a subdirectory, Claude has all three in context automatic
 - SQLite WAL mode required — API sidecar and future MCP server share the same database file.
 
 ## Vocabulary (use these terms consistently in prompts)
-- **Job**: a posting the user is tracking.
-- **Application**: the user's submission for a Job.
+- **Job-Application**: a submitted job application the user is tracking.
 - **Stage**: current status of an Application (e.g. Applied, Screened, Interviewing, Offer, Rejected).
 - **Contact**: a person associated with a Job or Application.
 - **Note**: a free-text record attached to an Application or Contact.

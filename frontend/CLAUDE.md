@@ -19,10 +19,10 @@ frontend/
     components/
       atoms/             # Smallest units: Button, Input, Label, Badge, Icon
       molecules/         # Atoms composed: FormField, StatusBadge, SearchBar
-      organisms/         # Complex sections: JobCard, ApplicationTable, NavBar
+      organisms/         # Complex sections: JobApplicationCard, JobApplicationTable, NavBar
       templates/         # Layout shells with slot props, no real data
-    features/            # Feature-sliced modules: jobs/, applications/, contacts/
-      jobs/
+    features/            # Feature-sliced modules: jobs-applications/, contacts/
+      job-applications/
         api.ts           # TanStack Query hooks for this feature
         types.ts         # Zod schemas + inferred TS types
         hooks.ts         # Non-query feature hooks (e.g. useJobFilters)
@@ -35,7 +35,7 @@ frontend/
 ## Atomic design levels
 - **Atoms** (`components/atoms/`): single-purpose, no business logic, no data fetching. Styled HTML wrappers — Button, Input, Label, Badge, Spinner.
 - **Molecules** (`components/molecules/`): compose atoms into a reusable unit — FormField (Label + Input + error), StatusBadge (Badge + icon). Still no data fetching.
-- **Organisms** (`components/organisms/`): self-contained UI sections that may accept complex props but don't fetch their own data — JobCard, ApplicationTable, ContactList. Wired to real data by feature components or routes.
+- **Organisms** (`components/organisms/`): self-contained UI sections that may accept complex props but don't fetch their own data — JobApplicationCard, JobApplicationTable, ContactList. Wired to real data by feature components or routes.
 - **Templates** (`components/templates/`): page layout shells. Accept slot props (`header`, `sidebar`, `children`). No business logic.
 - **Pages** (`routes/`): React Router route components. Compose templates + organisms + TanStack Query hooks. This is where data fetching happens.
 

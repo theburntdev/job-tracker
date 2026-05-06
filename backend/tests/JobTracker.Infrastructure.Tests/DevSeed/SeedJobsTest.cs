@@ -10,7 +10,7 @@ public sealed class SeedJobsTest
     // PowerShell: $env:RUN_DEV_SEED = "true"; dotnet test backend/tests/JobTracker.Infrastructure.Tests --filter SeedJobsTest
     // cmd.exe:        set RUN_DEV_SEED=true&& dotnet test backend/tests/JobTracker.Infrastructure.Tests --filter SeedJobsTest
     [Fact]
-    public async Task Seed_Dev_Database_With_Sample_Jobs()
+    public async Task Seed_Dev_Database_With_Sample_JobApplications()
     {
         if (Environment.GetEnvironmentVariable("RUN_DEV_SEED") != "true")
             return;
@@ -30,15 +30,15 @@ public sealed class SeedJobsTest
         const int total = 50;
         var third = total / 3;
 
-        var jobs =
-            Enumerable.Range(0, third).Select(_ => JobBuilder.Remote().Build())
-            .Concat(Enumerable.Range(0, third).Select(_ => JobBuilder.NoLink().Build()))
-            .Concat(Enumerable.Range(0, total - third * 2).Select(_ => JobBuilder.Minimal().Build()))
+        var jobApplications =
+            Enumerable.Range(0, third).Select(_ => JobApplicationBuilder.Remote().Build())
+            .Concat(Enumerable.Range(0, third).Select(_ => JobApplicationBuilder.NoLink().Build()))
+            .Concat(Enumerable.Range(0, total - third * 2).Select(_ => JobApplicationBuilder.Minimal().Build()))
             .ToList();
 
-        await context.Jobs.AddRangeAsync(jobs);
+        await context.JobApplications.AddRangeAsync(jobApplications);
         await context.SaveChangesAsync();
 
-        Assert.Equal(total, jobs.Count);
+        Assert.Equal(total, jobApplications.Count);
     }
 }

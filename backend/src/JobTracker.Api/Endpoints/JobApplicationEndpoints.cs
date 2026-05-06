@@ -1,14 +1,14 @@
-using JobTracker.Application.Jobs.GetJobs;
+using JobTracker.Application.JobApplications.GetJobApplications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobTracker.Api.Endpoints;
 
-public static class JobEndpoints
+public static class JobApplicationEndpoints
 {
-    public static IEndpointRouteBuilder MapJobEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapJobApplicationEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/jobs");
+        var group = app.MapGroup("/job-applications");
 
         group.MapGet("", async (
             ISender mediator,
@@ -16,7 +16,7 @@ public static class JobEndpoints
             [FromQuery] int page = 1,
             [FromQuery] int pageSize = 20) =>
         {
-            var result = await mediator.Send(new GetJobsQuery(page, pageSize), ct);
+            var result = await mediator.Send(new GetJobApplicationsQuery(page, pageSize), ct);
             return TypedResults.Ok(result);
         });
 

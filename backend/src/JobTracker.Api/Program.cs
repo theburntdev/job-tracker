@@ -1,5 +1,5 @@
 using JobTracker.Api.Endpoints;
-using JobTracker.Application.Jobs.GetJobs;
+using JobTracker.Application.JobApplications.GetJobApplications;
 using JobTracker.Infrastructure;
 using Serilog;
 
@@ -19,7 +19,7 @@ try
     builder.Services.AddMediatR(cfg =>
         cfg.RegisterServicesFromAssemblies(
             typeof(Program).Assembly,
-            typeof(GetJobsQueryHandler).Assembly));
+            typeof(GetJobApplicationsQueryHandler).Assembly));
 
     builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -30,7 +30,7 @@ try
         app.MapOpenApi();
     }
 
-    app.MapJobEndpoints();
+    app.MapJobApplicationEndpoints();
 
     app.Run();
 }

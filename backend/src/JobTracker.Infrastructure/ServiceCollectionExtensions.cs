@@ -1,5 +1,5 @@
 using JobTracker.Application.Common;
-using JobTracker.Application.Jobs;
+using JobTracker.Application.JobApplications;
 using JobTracker.Infrastructure.Interceptors;
 using JobTracker.Infrastructure.Persistence;
 using JobTracker.Infrastructure.Repositories;
@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
             opts.UseSqlite(configuration.GetConnectionString("Default"))
                 .AddInterceptors(new WalModeInterceptor()));
 
-        services.AddScoped<IJobRepository, JobRepository>();
+        services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

@@ -2,37 +2,43 @@ using JobTracker.Domain.Common;
 
 namespace JobTracker.Domain.Jobs;
 
-public sealed class Job
+public sealed class JobApplication
 {
-    public JobId Id { get; private set; }
+    public JobApplicationId Id { get; private set; }
     public string Title { get; private set; } = null!;
     public string Company { get; private set; } = null!;
     public string? Location { get; private set; }
     public string? Url { get; private set; }
     public string? Description { get; private set; }
+    public Stage Stage { get; private set; }
+    public DateTimeOffset? AppliedAt { get; private set; }
     public DateTimeOffset? PostedAt { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public DateTimeOffset UpdatedAt { get; private set; }
 
-    private Job() { }
+    private JobApplication() { }
 
-    public static Job Create(
+    public static JobApplication Create(
         string title,
         string company,
         string? location = null,
         string? url = null,
         string? description = null,
+        Stage stage = Stage.Applied,
+        DateTimeOffset? appliedAt = null,
         DateTimeOffset? postedAt = null)
     {
         var now = DateTimeOffset.UtcNow;
-        return new Job
+        return new JobApplication
         {
-            Id = new JobId(Guid.NewGuid()),
+            Id = new JobApplicationId(Guid.NewGuid()),
             Title = title,
             Company = company,
             Location = location,
             Url = url,
             Description = description,
+            Stage = stage,
+            AppliedAt = appliedAt,
             PostedAt = postedAt,
             CreatedAt = now,
             UpdatedAt = now
