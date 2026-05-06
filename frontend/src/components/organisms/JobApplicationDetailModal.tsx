@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '../atoms/Button'
 import { type JobApplication, Stage } from '../../features/job-applications/types'
+import { StatusBadge } from '../molecules/StatusBadge'
 import { cn } from '../../lib/cn'
 
 interface SaveData {
@@ -24,6 +25,8 @@ export function JobApplicationDetailModal({
   const [stage, setStage] = useState<Stage>(application.stage)
   const [description, setDescription] = useState(application.description ?? '')
   const [copied, setCopied] = useState(false)
+  const [stageOpen, setStageOpen] = useState(false)
+  const stageRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setStage(application.stage)
@@ -37,6 +40,17 @@ export function JobApplicationDetailModal({
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
+
+  useEffect(() => {
+    if (!stageOpen) return
+    const handler = (e: MouseEvent) => {
+      if (stageRef.current && !stageRef.current.contains(e.target as Node)) {
+        setStageOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [stageOpen])
 
   function handleCopy() {
     void navigator.clipboard.writeText(description)
@@ -127,17 +141,45 @@ export function JobApplicationDetailModal({
             </div>
             <div>
               <p className={labelClass}>Stage</p>
-              <select
-                value={stage}
-                onChange={(e) => setStage(e.target.value as Stage)}
-                className="mt-1 rounded border border-border bg-surface-elevated px-2 py-1.5 text-sm text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-              >
-                {Stage.options.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+              <div ref={stageRef} className="relative mt-1">
+                <button
+                  type="button"
+                  onClick={() => setStageOpen((o) => !o)}
+                  className="flex items-center gap-1.5 rounded px-2 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                >
+                  <StatusBadge stage={stage} />
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-text-secondary"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                {stageOpen && (
+                  <div className="absolute left-0 top-full z-10 mt-1 flex flex-col gap-0.5 rounded bg-surface-elevated p-1 shadow-lg">
+                    {Stage.options.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => { setStage(s as Stage); setStageOpen(false) }}
+                        className={cn(
+                          'rounded px-2 py-1 text-left hover:bg-surface',
+                          s === stage && 'bg-surface',
+                        )}
+                      >
+                        <StatusBadge stage={s as Stage} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <div>
               <p className={labelClass}>Applied</p>
@@ -146,18 +188,6 @@ export function JobApplicationDetailModal({
                   ? new Date(application.appliedAt).toLocaleDateString()
                   : '—'}
               </p>
-            </div>
-            <div>
-              <p className={labelClass}>Posted</p>
-              <p className={cn(valueClass, !application.postedAt && 'text-text-muted')}>
-                {application.postedAt
-                  ? new Date(application.postedAt).toLocaleDateString()
-                  : '—'}
-              </p>
-            </div>
-            <div>
-              <p className={labelClass}>Added</p>
-              <p className={valueClass}>{new Date(application.createdAt).toLocaleDateString()}</p>
             </div>
           </div>
 
