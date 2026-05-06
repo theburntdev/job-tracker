@@ -36,6 +36,7 @@ export const CreateJobApplicationSchema = z.object({
   url: z.string().optional(),
   description: z.string().optional(),
   stage: Stage,
+  appliedAt: z.string().nullable().optional(),
 })
 export type CreateJobApplicationInput = z.infer<typeof CreateJobApplicationSchema>
 

@@ -13,6 +13,7 @@
     "gen:api": "openapi-typescript http://localhost:5063/openapi/v1.json -o ./src/lib/api.types.gen.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.62.0",
     "clsx": "^2.1.1",
     "react": "^19.0.0",
@@ -32,10 +33,10 @@
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^25.0.1",
+    "openapi-typescript": "^7.0.0",
     "tailwindcss": "^4.0.0",
     "typescript": "~5.6.2",
     "vite": "^6.0.5",
-    "vitest": "^2.1.8",
-    "openapi-typescript": "^7.0.0"
+    "vitest": "^2.1.8"
   }
 }
