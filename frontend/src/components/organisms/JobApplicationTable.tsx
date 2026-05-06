@@ -45,7 +45,8 @@ export function JobApplicationTable({
         <tr className="border-b border-border text-left">
           <th className="pb-2 pr-4 text-sm font-medium text-text-secondary">Company</th>
           <th className="pb-2 pr-4 text-sm font-medium text-text-secondary">Role</th>
-          <th className="pb-2 text-sm font-medium text-text-secondary">Stage</th>
+          <th className="pb-2 pr-4 text-sm font-medium text-text-secondary">Stage</th>
+          <th className="pb-2 text-sm font-medium text-text-secondary">Applied</th>
         </tr>
       </thead>
       <tbody>
@@ -57,8 +58,11 @@ export function JobApplicationTable({
           >
             <td className="py-3 pr-4 text-text-primary">{app.company}</td>
             <td className="py-3 pr-4 text-text-secondary">{app.title}</td>
-            <td className="py-3">
+            <td className="py-3 pr-4">
               <StatusBadge stage={app.stage} />
+            </td>
+            <td className="py-3 text-text-secondary">
+              {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : '—'}
             </td>
           </tr>
         ))}

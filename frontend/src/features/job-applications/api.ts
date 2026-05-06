@@ -25,7 +25,15 @@ export function useJobApplications() {
     queryKey: QUERY_KEY,
     queryFn: async () => {
       const data = await apiClient.get<unknown>('/api/job-applications')
-      return PageSchema.parse(data).items
+      const items = PageSchema.parse(data).items
+      return items.slice().sort((a, b) => {
+        const aTime = a.appliedAt ? new Date(a.appliedAt).getTime() : null
+        const bTime = b.appliedAt ? new Date(b.appliedAt).getTime() : null
+        if (aTime !== null && bTime !== null) return bTime - aTime
+        if (aTime !== null) return -1
+        if (bTime !== null) return 1
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      })
     },
   })
 }
