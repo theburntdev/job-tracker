@@ -13,19 +13,24 @@ interface JobApplicationDetailModalProps {
   application: JobApplication
   onClose: () => void
   onSave: (data: SaveData) => void
+  onDelete: () => void
   isSaving: boolean
+  isDeleting?: boolean
 }
 
 export function JobApplicationDetailModal({
   application,
   onClose,
   onSave,
+  onDelete,
   isSaving,
+  isDeleting = false,
 }: JobApplicationDetailModalProps) {
   const [stage, setStage] = useState<Stage>(application.stage)
   const [description, setDescription] = useState(application.description ?? '')
   const [copied, setCopied] = useState(false)
   const [stageOpen, setStageOpen] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -60,6 +65,19 @@ export function JobApplicationDetailModal({
 
   function handleSave() {
     onSave({ stage, description: description || null })
+  }
+
+  function handleDeleteClick() {
+    setConfirmingDelete(true)
+  }
+
+  function handleDeleteConfirm() {
+    setConfirmingDelete(false)
+    onDelete()
+  }
+
+  function handleDeleteCancel() {
+    setConfirmingDelete(false)
   }
 
   const labelClass = 'text-xs font-medium uppercase tracking-wide text-text-secondary'
@@ -247,13 +265,35 @@ export function JobApplicationDetailModal({
         </div>
 
         {/* footer */}
-        <div className="flex flex-none items-center justify-end gap-3 border-t border-border px-6 py-4">
-          <Button variant="secondary" onClick={onClose} disabled={isSaving}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} isLoading={isSaving}>
-            Save
-          </Button>
+        <div className="flex flex-none items-center justify-between border-t border-border px-6 py-4">
+          {confirmingDelete ? (
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-text-secondary">Delete this application?</span>
+              <Button variant="destructive" size="sm" onClick={handleDeleteConfirm} isLoading={isDeleting}>
+                Confirm
+              </Button>
+              <Button variant="secondary" size="sm" onClick={handleDeleteCancel} disabled={isDeleting}>
+                Cancel
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleDeleteClick}
+              disabled={isSaving || isDeleting}
+            >
+              Delete
+            </Button>
+          )}
+          <div className="flex items-center gap-3">
+            <Button variant="secondary" onClick={onClose} disabled={isSaving || isDeleting}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} isLoading={isSaving} disabled={isDeleting}>
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     </div>

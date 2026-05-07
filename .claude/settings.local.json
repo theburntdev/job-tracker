@@ -3,7 +3,10 @@
     "allow": [
       "Bash(Get-ChildItem -Path \"C:\\\\GITS\\\\job-tracker\\\\backend\" -Filter \"*.csproj\" -Recurse)",
       "Bash(powershell *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "PowerShell(cmd /c dir \"C:\\\\GITS\\\\job-tracker\\\\backend\" 2>&1)",
+      "PowerShell(dotnet build *)",
+      "PowerShell(dotnet test *)"
     ]
   }
 }

@@ -40,6 +40,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     throw new ApiClientError(errorBody)
   }
 
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as T
+  }
+
   return response.json() as Promise<T>
 }
 

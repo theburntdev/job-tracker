@@ -11,6 +11,7 @@ const defaultProps = {
   }),
   onClose: vi.fn(),
   onSave: vi.fn(),
+  onDelete: vi.fn(),
   isSaving: false,
 }
 
@@ -68,5 +69,33 @@ describe('JobApplicationDetailModal', () => {
   it('shows loading spinner when isSaving is true', () => {
     render(<JobApplicationDetailModal {...defaultProps} isSaving />)
     expect(screen.getByLabelText('Loading')).toBeInTheDocument()
+  })
+
+  it('shows confirmation prompt when Delete button clicked', async () => {
+    const user = userEvent.setup()
+    render(<JobApplicationDetailModal {...defaultProps} />)
+    await user.click(screen.getByRole('button', { name: /^delete$/i }))
+    expect(screen.getByText(/delete this application\?/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /confirm/i })).toBeInTheDocument()
+  })
+
+  it('calls onDelete when delete is confirmed', async () => {
+    const user = userEvent.setup()
+    const onDelete = vi.fn()
+    render(<JobApplicationDetailModal {...defaultProps} onDelete={onDelete} />)
+    await user.click(screen.getByRole('button', { name: /^delete$/i }))
+    await user.click(screen.getByRole('button', { name: /confirm/i }))
+    expect(onDelete).toHaveBeenCalledOnce()
+  })
+
+  it('dismisses confirmation without calling onDelete when cancel clicked', async () => {
+    const user = userEvent.setup()
+    const onDelete = vi.fn()
+    render(<JobApplicationDetailModal {...defaultProps} onDelete={onDelete} />)
+    await user.click(screen.getByRole('button', { name: /^delete$/i }))
+    const cancelButtons = screen.getAllByRole('button', { name: /^cancel$/i })
+    await user.click(cancelButtons[0])
+    expect(onDelete).not.toHaveBeenCalled()
+    expect(screen.queryByText(/delete this application\?/i)).not.toBeInTheDocument()
   })
 })

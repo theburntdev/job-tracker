@@ -1,4 +1,5 @@
 using JobTracker.Application.JobApplications.CreateJobApplication;
+using JobTracker.Application.JobApplications.DeleteJobApplication;
 using JobTracker.Application.JobApplications.GetJobApplications;
 using JobTracker.Application.JobApplications.UpdateJobApplication;
 using MediatR;
@@ -60,6 +61,15 @@ public static class JobApplicationEndpoints
                 request.PostedAt);
             var result = await mediator.Send(cmd, ct);
             return result.ToHttpResult();
+        });
+
+        group.MapDelete("{id:guid}", async (
+            Guid id,
+            ISender mediator,
+            CancellationToken ct) =>
+        {
+            await mediator.Send(new DeleteJobApplicationCommand(id), ct);
+            return TypedResults.NoContent();
         });
 
         return app;

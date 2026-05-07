@@ -1,5 +1,8 @@
 using System.Text.Json.Serialization;
+using FluentValidation;
+using JobTracker.Api;
 using JobTracker.Api.Endpoints;
+using JobTracker.Application.Common;
 using JobTracker.Application.JobApplications.GetJobApplications;
 using JobTracker.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +21,18 @@ try
            .ReadFrom.Services(services));
 
     builder.Services.AddOpenApi();
+    builder.Services.AddValidatorsFromAssembly(typeof(GetJobApplicationsQueryHandler).Assembly);
+
     builder.Services.AddMediatR(cfg =>
+    {
         cfg.RegisterServicesFromAssemblies(
             typeof(Program).Assembly,
-            typeof(GetJobApplicationsQueryHandler).Assembly));
+            typeof(GetJobApplicationsQueryHandler).Assembly);
+        cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+    });
+
+    builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+    builder.Services.AddProblemDetails();
 
     builder.Services.ConfigureHttpJsonOptions(options =>
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -41,6 +52,8 @@ try
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
     }
+
+    app.UseExceptionHandler();
 
     if (app.Environment.IsDevelopment())
     {

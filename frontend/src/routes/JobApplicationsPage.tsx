@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useJobApplications, useUpdateJobApplication, useCreateJobApplication } from '../features/job-applications/api'
+import { useJobApplications, useUpdateJobApplication, useCreateJobApplication, useDeleteJobApplication } from '../features/job-applications/api'
 import { useFilteredJobApplications } from '../features/job-applications/hooks'
 import { useJobStore, type SortField, type SortDir } from '../stores/useJobStore'
 import { useUiStore } from '../stores/useUiStore'
@@ -35,6 +35,7 @@ export default function JobApplicationsPage() {
   const closeCreateModal = useUiStore((s) => s.closeCreateModal)
   const { mutate: updateJob, isPending: isUpdating } = useUpdateJobApplication()
   const { mutate: createJob, isPending: isCreating } = useCreateJobApplication()
+  const { mutate: deleteJob, isPending: isDeleting } = useDeleteJobApplication()
 
   const selectedJob = items.find((app) => app.id === selectedJobId) ?? null
 
@@ -74,7 +75,11 @@ export default function JobApplicationsPage() {
               { onSuccess: () => selectJob(null) },
             )
           }}
+          onDelete={() => {
+            deleteJob(selectedJob.id, { onSuccess: () => selectJob(null) })
+          }}
           isSaving={isUpdating}
+          isDeleting={isDeleting}
         />
       )}
       {isCreateModalOpen && (
