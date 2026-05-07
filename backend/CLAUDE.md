@@ -163,6 +163,13 @@ No separate `Validators/` folder — validator lives in same folder as its comma
   ```
 - Default values in constructors must produce a valid entity — recipes override only what the scenario needs.
 
+## Test conventions
+- Test method naming: `{MethodUnderTest}_Given{Scenario}_Then{Assertion}`
+  ```csharp
+  Handle_GivenValidCommand_ThenReturnsCreatedApplication()
+  ToHttpResult_GivenNotFoundResult_ThenReturns404()
+- One assertion concept per test — split multiple outcomes into separate methods. The only exception is if the scenarios are as simple as an InlineData set up with an input and expected output.
+
 ## What NOT to do
 - Do not put business logic in endpoints or DbContext — it belongs in Domain.
 - Do not use `[ApiController]` or MVC controllers — minimal APIs only.

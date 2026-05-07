@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\GITS\\\\job-tracker\\\\backend\" -Filter \"*.csproj\" -Recurse)",
+      "Bash(powershell *)"
+    ]
+  }
+}
