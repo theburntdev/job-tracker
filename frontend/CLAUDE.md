@@ -155,15 +155,94 @@ export type JobApplication = z.infer<typeof JobApplicationSchema>
 **Commit `api.types.gen.ts`** — keeps CI typecheck green without requiring backend to run.
 
 ## Testing conventions
-- Test files co-located with source: `Button.tsx` → `Button.test.tsx` in same directory.
-- **Atoms**: test rendered output and prop variations. No mocking needed.
-- **Molecules**: test composed behavior (e.g. FormField shows error message when `error` prop set). No mocking needed.
-- **Organisms**: test user interactions (click, submit, keyboard). Mock TanStack Query hooks or pass data via props — never mock the API client directly.
-- **Routes**: test full user flows with `MemoryRouter`. Mock `api.ts` hooks, not fetch.
-- **Hooks** (`features/*/hooks.ts`): test with `renderHook` from React Testing Library.
-- Do not mock Zustand stores — set initial state via the store's API in `beforeEach`.
-- Do not test implementation details (internal state, private functions). Test behavior a user can observe.
-- Test file must exist for every non-trivial atom, molecule, organism, and custom hook. Trivial = pure pass-through with no logic (e.g. a single-element wrapper with one className).
+
+### Coverage thresholds
+Lines 70%, functions 70%, branches 60%, statements 70%. Configured in `vite.config.ts`.
+Run: `npx vitest run --coverage` → HTML report at `coverage/index.html`.
+`src/lib/api.types.gen.ts`, `src/main.tsx`, and `src/styles/` are excluded from coverage.
+
+### File location and naming
+- Co-locate: `Button.tsx` → `Button.test.tsx` in same directory.
+- Stores/pure TS: `.test.ts` (no JSX). Components: `.test.tsx`.
+- Test file required for every non-trivial atom, molecule, organism, and custom hook. Trivial = single-element pass-through with no logic.
+
+### Test structure (AAA)
+```typescript
+describe('ComponentName', () => {
+  it('[verb]s [what] when [condition]', () => {
+    // Arrange
+    const props = { ... }
+
+    // Act
+    render(<Component {...props} />)
+
+    // Assert
+    expect(screen.getByRole('button', { name: /submit/i })).toBeInTheDocument()
+  })
+})
+```
+- `describe` = component/hook name. `it` = observable behavior, not implementation.
+- Blank line between Arrange / Act / Assert blocks.
+- `it` format: `'[verb]s [what] when [condition]'` — reads as a sentence.
+
+### RTL query priority
+1. `getByRole` — semantic, accessible (preferred)
+2. `getByLabelText` — forms
+3. `getByText` — visible text
+4. `getByTestId` — last resort only
+
+### User interactions
+Always `userEvent` over `fireEvent`:
+```typescript
+const user = userEvent.setup()
+await user.click(screen.getByRole('button', { name: /submit/i }))
+await user.type(screen.getByRole('textbox', { name: /title/i }), 'My Job')
+```
+
+### API mocking (MSW)
+Default handlers in `src/test-utils/server.ts`. MSW lifecycle wired in `src/test-setup.ts` (global).
+Per-test overrides for error/edge cases:
+```typescript
+server.use(
+  http.get(/\/api\/job-applications/, () => HttpResponse.error())
+)
+```
+Never mock `apiClient` directly — intercept at the network layer via MSW.
+
+### Zustand stores
+Test via the store directly — no component or `renderHook` needed for pure state logic:
+```typescript
+beforeEach(() => {
+  useJobStore.setState({ selectedJobId: null, stageFilter: null, sortField: 'appliedAt', sortDir: 'desc' })
+})
+it('sets selectedJobId when selectJob called', () => {
+  useJobStore.getState().selectJob('abc-123')
+  expect(useJobStore.getState().selectedJobId).toBe('abc-123')
+})
+```
+
+### Feature hooks
+Use `renderHook` from RTL. Wrap in `QueryClientProvider` if using TanStack Query.
+
+### Test data factories
+`src/test-utils/factories.ts` — plain functions with sensible defaults and `overrides`:
+```typescript
+makeJobApplication({ stage: 'Rejected', company: 'Globex' })
+```
+
+### By layer
+- **Atoms**: rendered output and prop variations. No mocking needed.
+- **Molecules**: composed behavior (e.g. error message when `error` prop set). No mocking needed.
+- **Organisms**: user interactions (click, submit, keyboard). Pass data via props — never fetch inside organisms.
+- **Routes**: full flows with `MemoryRouter`. Mock `api.ts` hooks, not fetch.
+- **Hooks** (`features/*/hooks.ts`): `renderHook` from RTL.
+
+### What NOT to test
+- Tailwind class names or design tokens
+- Internal `useState` values
+- TypeScript types (compiler enforces these)
+- Third-party internals (Zustand, TanStack Query)
+- Auto-generated `api.types.gen.ts`
 
 ## Future CLAUDE.md splits
 As directories grow, extract these sections into subdirectory CLAUDE.md files to avoid loading all rules on every task:
