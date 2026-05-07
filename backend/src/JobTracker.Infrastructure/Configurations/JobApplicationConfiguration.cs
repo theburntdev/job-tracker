@@ -33,7 +33,7 @@ internal sealed class JobApplicationConfiguration : IEntityTypeConfiguration<Job
             .HasMaxLength(2048);
 
         builder.Property(j => j.Description)
-            .HasMaxLength(2048);
+            .HasMaxLength(9000);
 
         builder.Property(j => j.Stage)
             .IsRequired();
