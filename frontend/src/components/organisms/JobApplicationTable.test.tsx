@@ -8,6 +8,7 @@ const defaultProps = {
   isLoading: false,
   error: null,
   onSelect: vi.fn(),
+  onStageChange: vi.fn(),
   sortField: 'appliedAt' as const,
   sortDir: 'desc' as const,
   onSortChange: vi.fn(),
@@ -42,12 +43,12 @@ describe('JobApplicationTable', () => {
     expect(screen.getByText('Designer')).toBeInTheDocument()
   })
 
-  it('calls onSelect with application id when row clicked', async () => {
+  it('calls onSelect with application id when detail icon clicked', async () => {
     const user = userEvent.setup()
     const onSelect = vi.fn()
     const app = makeJobApplication({ id: 'app-id-1', company: 'Acme' })
     render(<JobApplicationTable {...defaultProps} applications={[app]} onSelect={onSelect} />)
-    await user.click(screen.getByText('Acme'))
+    await user.click(screen.getByRole('button', { name: /open details for acme/i }))
     expect(onSelect).toHaveBeenCalledWith('app-id-1')
   })
 
@@ -73,7 +74,7 @@ describe('JobApplicationTable', () => {
         onSortChange={onSortChange}
       />,
     )
-    await user.click(screen.getByRole('button', { name: /applied/i }))
+    await user.click(screen.getByRole('button', { name: /sort by applied/i }))
     expect(onSortChange).toHaveBeenCalledWith('appliedAt', 'asc')
   })
 })

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useJobApplications, useUpdateJobApplication, useCreateJobApplication, useDeleteJobApplication } from '../features/job-applications/api'
 import { useFilteredJobApplications } from '../features/job-applications/hooks'
+import { type JobApplication, type Stage } from '../features/job-applications/types'
 import { useJobStore, type SortField, type SortDir } from '../stores/useJobStore'
 import { useUiStore } from '../stores/useUiStore'
 import { JobApplicationTable } from '../components/organisms/JobApplicationTable'
@@ -39,6 +40,20 @@ export default function JobApplicationsPage() {
 
   const selectedJob = items.find((app) => app.id === selectedJobId) ?? null
 
+  function handleStageChange(app: JobApplication, newStage: Stage) {
+    updateJob({
+      id: app.id,
+      title: app.title,
+      company: app.company,
+      location: app.location,
+      url: app.url,
+      description: app.description,
+      stage: newStage,
+      appliedAt: app.appliedAt,
+      postedAt: app.postedAt,
+    })
+  }
+
   return (
     <MainLayout>
       <div className="mb-6 flex items-center justify-between">
@@ -50,6 +65,8 @@ export default function JobApplicationsPage() {
         isLoading={isLoading}
         error={error}
         onSelect={selectJob}
+        onStageChange={handleStageChange}
+        isUpdatingStage={isUpdating}
         sortField={sortField}
         sortDir={sortDir}
         onSortChange={handleSortChange}

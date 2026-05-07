@@ -1,6 +1,6 @@
 import { Spinner } from '../atoms/Spinner'
-import { StatusBadge } from '../molecules/StatusBadge'
-import { type JobApplication } from '../../features/job-applications/types'
+import { StageDropdown } from '../molecules/StageDropdown'
+import { type JobApplication, type Stage } from '../../features/job-applications/types'
 import { type SortField, type SortDir } from '../../stores/useJobStore'
 
 interface JobApplicationTableProps {
@@ -8,6 +8,8 @@ interface JobApplicationTableProps {
   isLoading: boolean
   error: Error | null
   onSelect: (id: string) => void
+  onStageChange: (app: JobApplication, stage: Stage) => void
+  isUpdatingStage?: boolean
   sortField: SortField
   sortDir: SortDir
   onSortChange: (field: SortField, dir: SortDir) => void
@@ -23,6 +25,8 @@ export function JobApplicationTable({
   isLoading,
   error,
   onSelect,
+  onStageChange,
+  isUpdatingStage,
   sortField,
   sortDir,
   onSortChange,
@@ -63,11 +67,13 @@ export function JobApplicationTable({
     <table className="w-full border-collapse">
       <thead>
         <tr className="border-b border-border text-left">
+          <th className="w-8 pb-2" />
           <th className="pb-2 pr-4 text-sm font-medium text-text-secondary">Company</th>
           <th className="pb-2 pr-4 text-sm font-medium text-text-secondary">Role</th>
           <th className="pb-2 pr-4 text-sm font-medium text-text-secondary">Stage</th>
           <th className="pb-2 pr-4 text-sm font-medium text-text-secondary">
             <button
+              aria-label="Sort by Applied date"
               className="flex cursor-pointer items-center text-text-secondary hover:text-text-primary"
               onClick={() => handleSortClick('appliedAt')}
             >
@@ -90,13 +96,51 @@ export function JobApplicationTable({
         {applications.map((app) => (
           <tr
             key={app.id}
-            className="cursor-pointer border-b border-border transition-colors hover:bg-surface"
-            onClick={() => onSelect(app.id)}
+            className="border-b border-border transition-colors hover:bg-surface"
           >
+            <td className="py-3 pr-2">
+              <button
+                type="button"
+                onClick={() => onSelect(app.id)}
+                aria-label={`Open details for ${app.company} – ${app.title}`}
+                className="rounded p-1 text-text-muted hover:bg-surface-elevated hover:text-text-primary"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </td>
             <td className="py-3 pr-4 text-text-primary">{app.company}</td>
-            <td className="py-3 pr-4 text-text-secondary">{app.title}</td>
+            <td className="py-3 pr-4 text-text-secondary">
+              {app.url?.trim() ? (
+                <a
+                  href={app.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-primary hover:underline"
+                >
+                  {app.title}
+                </a>
+              ) : (
+                app.title
+              )}
+            </td>
             <td className="py-3 pr-4">
-              <StatusBadge stage={app.stage} />
+              <StageDropdown
+                stage={app.stage}
+                onChange={(s) => onStageChange(app, s)}
+                disabled={isUpdatingStage}
+              />
             </td>
             <td className="py-3 pr-4 text-text-secondary">
               {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : '—'}

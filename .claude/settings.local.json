@@ -6,7 +6,8 @@
       "Bash(npm install *)",
       "PowerShell(cmd /c dir \"C:\\\\GITS\\\\job-tracker\\\\backend\" 2>&1)",
       "PowerShell(dotnet build *)",
-      "PowerShell(dotnet test *)"
+      "PowerShell(dotnet test *)",
+      "Bash(npm test *)"
     ]
   }
 }
