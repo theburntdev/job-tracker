@@ -1,4 +1,4 @@
-# Job Tracker
+# Job Application Tracker
 
 A desktop app for tracking job applications — log postings, track application stages, store contacts, and record interview notes.
 

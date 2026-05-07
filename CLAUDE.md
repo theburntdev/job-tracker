@@ -1,4 +1,4 @@
-# Job Tracker — Project Root
+# Job Application Tracker — Project Root
 
 ## What this is
 A desktop job-application tracker. Users log job postings, track application status, store contacts, and record interview notes. Built as a learning project for Claude Code.

@@ -9,6 +9,6 @@ describe('NavBar', () => {
         <NavBar />
       </MemoryRouter>,
     )
-    expect(screen.getByRole('link', { name: /job tracker/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Job Application Tracker/i })).toBeInTheDocument()
   })
 })
