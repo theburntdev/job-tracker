@@ -83,7 +83,7 @@ export function CreateJobApplicationModal({
       url: values.url || undefined,
       description: values.description || undefined,
       stage: values.stage,
-      appliedAt: values.appliedAt ? `${values.appliedAt}T00:00:00.000Z` : null,
+      appliedAt: values.appliedAt ? new Date(`${values.appliedAt}T00:00:00`).toISOString() : null,
     })
   }
 
