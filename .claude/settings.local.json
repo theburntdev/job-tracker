@@ -7,7 +7,10 @@
       "PowerShell(cmd /c dir \"C:\\\\GITS\\\\job-tracker\\\\backend\" 2>&1)",
       "PowerShell(dotnet build *)",
       "PowerShell(dotnet test *)",
-      "Bash(npm test *)"
+      "Bash(npm test *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\GITS\\\\job-tracker\" -Recurse -Depth 3)",
+      "Bash(Select-Object FullName, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)"
     ]
   }
 }

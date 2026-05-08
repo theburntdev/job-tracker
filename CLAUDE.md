@@ -32,6 +32,7 @@ When you're working in a subdirectory, Claude has all three in context automatic
 - Prefer explicit types over `var`/`any` unless the type is immediately obvious from the right-hand side.
 - Write no comments unless the WHY is non-obvious to a future reader.
 - SQLite WAL mode required — API sidecar and future MCP server share the same database file.
+- Close DB Browser for SQLite before starting the API — SQLite file-locking will block the app from acquiring a write lock during migration startup.
 
 ## Vocabulary (use these terms consistently in prompts)
 - **Job-Application**: a submitted job application the user is tracking.

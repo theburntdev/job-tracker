@@ -12,3 +12,5 @@ A desktop app for tracking job applications — log postings, track application 
 ## Inspecting the database
 
 [DB Browser for SQLite](https://sqlitebrowser.org/) lets you open the `.db` file directly and browse tables, run queries, and inspect data without any extra setup.
+
+> **Note:** Close DB Browser before starting the API. SQLite file-locking will block the app from acquiring a write lock on startup.
