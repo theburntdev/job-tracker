@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import logo from '../../assets/KumonSad.png'
+import logo from '../../assets/KumonAngryTears.png'
 
 export function NavBar() {
   return (
