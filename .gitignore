@@ -2,32 +2,33 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
+# Claude Code local settings (machine-specific permissions)
+.claude/settings.local.json
+
 # SQLite database files
 *.db
 *.db-shm
 *.db-wal
 
 /backend/.vs/JobTracker.slnx
-/backend/src/JobTracker.Api/bin/Debug/net10.0
+/backend/src/JobTracker.Api/bin
 /backend/src/JobTracker.Api/obj
-/backend/src/JobTracker.Application/bin/Debug/net10.0
+/backend/src/JobTracker.Application/bin
 /backend/src/JobTracker.Application/obj
-/backend/src/JobTracker.Domain/bin/Debug/net10.0
+/backend/src/JobTracker.Domain/bin
 /backend/src/JobTracker.Domain/obj
-/backend/src/JobTracker.Infrastructure/bin/Debug/net10.0
+/backend/src/JobTracker.Infrastructure/bin
 /backend/src/JobTracker.Infrastructure/obj
 /backend/tests/JobTracker.Api.Tests/bin/Debug/net10.0
 /backend/tests/JobTracker.Api.Tests/obj
-/backend/tests/JobTracker.Application.Tests/bin/Debug/net10.0
+/backend/tests/JobTracker.Application.Tests/bin
 /backend/tests/JobTracker.Application.Tests/obj
-/backend/tests/JobTracker.Domain.Tests/bin/Debug/net10.0
+/backend/tests/JobTracker.Domain.Tests/bin
 /backend/tests/JobTracker.Domain.Tests/obj
-/backend/tests/JobTracker.Infrastructure.Tests/bin/Debug/net10.0
+/backend/tests/JobTracker.Infrastructure.Tests/bin
 /backend/tests/JobTracker.Infrastructure.Tests/obj
-/backend/tests/JobTracker.Testing.Common/bin/Debug/net10.0
+/backend/tests/JobTracker.Testing.Common/bin
 /backend/tests/JobTracker.Testing.Common/obj
 frontend/node_modules/*
 frontend/coverage/*
-backend/.vs/ProjectEvaluation/jobtracker.metadata.v10.bin
-backend/.vs/ProjectEvaluation/jobtracker.projects.v10.bin
-backend/.vs/ProjectEvaluation/jobtracker.strings.v10.bin
+backend/.vs

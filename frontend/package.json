@@ -10,11 +10,13 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
-    "gen:api": "openapi-typescript http://localhost:5063/openapi/v1.json -o ./src/lib/api.types.gen.ts"
+    "gen:api": "openapi-typescript http://localhost:5063/openapi/v1.json -o ./src/lib/api.types.gen.ts",
+    "build:sidecar": "powershell -ExecutionPolicy Bypass -File ../scripts/build-sidecar.ps1"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.62.0",
+    "@tauri-apps/api": "^2.11.0",
     "clsx": "^2.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
