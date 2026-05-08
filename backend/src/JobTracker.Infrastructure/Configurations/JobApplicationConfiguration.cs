@@ -20,20 +20,20 @@ internal sealed class JobApplicationConfiguration : IEntityTypeConfiguration<Job
 
         builder.Property(j => j.Title)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(JobApplicationConstraints.TitleMaxLength);
 
         builder.Property(j => j.Company)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(JobApplicationConstraints.CompanyMaxLength);
 
         builder.Property(j => j.Location)
-            .HasMaxLength(200);
+            .HasMaxLength(JobApplicationConstraints.LocationMaxLength);
 
         builder.Property(j => j.Url)
-            .HasMaxLength(2048);
+            .HasMaxLength(JobApplicationConstraints.UrlMaxLength);
 
         builder.Property(j => j.Description)
-            .HasMaxLength(9000);
+            .HasMaxLength(JobApplicationConstraints.DescriptionMaxLength);
 
         builder.Property(j => j.Stage)
             .IsRequired();

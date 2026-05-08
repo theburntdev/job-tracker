@@ -1,4 +1,5 @@
 using FluentValidation;
+using JobTracker.Domain.Jobs;
 
 namespace JobTracker.Application.JobApplications.CreateJobApplication;
 
@@ -8,14 +9,14 @@ public sealed class CreateJobApplicationValidator : AbstractValidator<CreateJobA
     {
         RuleFor(x => x.Title)
             .NotEmpty()
-            .MaximumLength(200);
+            .MaximumLength(JobApplicationConstraints.TitleMaxLength);
 
         RuleFor(x => x.Company)
             .NotEmpty()
-            .MaximumLength(200);
+            .MaximumLength(JobApplicationConstraints.CompanyMaxLength);
 
         RuleFor(x => x.Location)
-            .MaximumLength(200)
+            .MaximumLength(JobApplicationConstraints.LocationMaxLength)
             .When(x => x.Location is not null);
 
         RuleFor(x => x.Url)
@@ -25,7 +26,7 @@ public sealed class CreateJobApplicationValidator : AbstractValidator<CreateJobA
             .When(x => x.Url is not null);
 
         RuleFor(x => x.Description)
-            .MaximumLength(5000)
+            .MaximumLength(JobApplicationConstraints.DescriptionMaxLength)
             .When(x => x.Description is not null);
     }
 }
