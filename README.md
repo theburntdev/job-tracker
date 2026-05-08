@@ -61,6 +61,8 @@ npm run build:sidecar
 
 ### Backend only (no Tauri)
 
+> **Port conflict:** The sidecar and Visual Studio both bind to `:5063`. Only one can run at a time. Close the Tauri desktop app before launching the API in Visual Studio — app exit kills the sidecar automatically.
+
 ```powershell
 # From repo root — hot reload:
 dotnet watch --project backend/src/JobTracker.Api
@@ -120,9 +122,24 @@ This runs `scripts/build-sidecar.ps1`, which publishes the .NET project in Relea
 
 ## Database
 
-SQLite file lives at the app's data directory (resolved at runtime by the API). To inspect it with DB Browser for SQLite:
+SQLite file lives at the app's data directory (resolved at runtime by the API).
 
-> **Close DB Browser before starting the API.** SQLite's file lock will prevent the API from acquiring a write lock during migration startup.
+### WAL mode and concurrent access
+
+The database runs in WAL (Write-Ahead Log) mode. Instead of locking the main DB file on every write, SQLite appends changes to a separate `.wal` file. Readers always read a consistent snapshot of the main file — they are never blocked by an in-progress write. Writers append to the WAL without touching what readers are reading. SQLite periodically checkpoints the WAL back into the main file.
+
+**Practical effect:** the desktop app (via the .NET sidecar) and the MCP server can write to the same SQLite file simultaneously without deadlocking. If two writes collide at the exact same millisecond, SQLite queues the second one and retries for up to 5 seconds (`busy_timeout`) before failing — which under normal single-user load will never happen.
+
+Both the API and MCP connections must set these pragmas on every connection:
+
+```sql
+PRAGMA journal_mode=WAL;
+PRAGMA busy_timeout=5000;
+```
+
+### DB Browser for SQLite
+
+> **Close DB Browser before starting the API or MCP server.** DB Browser holds an exclusive file lock during active use that bypasses WAL — it will prevent the API from acquiring a write lock during migration startup and can block MCP writes.
 
 ---
 
