@@ -33,3 +33,4 @@ frontend/node_modules/*
 frontend/coverage/*
 backend/.vs
 backend/publish
+frontend/dist

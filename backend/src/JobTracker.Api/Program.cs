@@ -51,7 +51,7 @@ try
                   .AllowAnyMethod());
 
         options.AddPolicy("Tauri", policy =>
-            policy.WithOrigins("https://tauri.localhost", "tauri://localhost")
+            policy.WithOrigins("https://tauri.localhost", "http://tauri.localhost", "tauri://localhost")
                   .AllowAnyHeader()
                   .AllowAnyMethod());
     });

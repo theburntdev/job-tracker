@@ -34,6 +34,11 @@
       "icons/icon.ico"
     ],
     "externalBin": ["binaries/JobTracker.Api"],
+    "windows": {
+      "nsis": {
+        "installerHooks": "./nsis-hooks.nsh"
+      }
+    },
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }

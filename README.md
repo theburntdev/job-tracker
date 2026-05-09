@@ -121,12 +121,24 @@ Tauri passes these environment variables to the sidecar at launch:
 
 The binary must be built and placed before running `cargo tauri dev` or `cargo tauri build`:
 
+## Troubleshooting desktop install / prod build
+
+NSIS installer hooks auto-kill stale processes before install/uninstall:
+- `JobTracker.Api.exe`
+- `job-tracker.exe`
+
+This avoids installer failures when a previous app/sidecar process is still running.
+
 ```powershell
+# View sidecar runtime logs (if present)
+Get-Content "$env:APPDATA\com.burntdev.jobtracker\sidecar.log" -ErrorAction SilentlyContinue
+
 # From frontend/
 npm run build:sidecar
 
-# Run this if you get an error saying another process is hitting the API, run
+# Manual fallback if needed:
 Stop-Process -Name "JobTracker.Api" -ErrorAction SilentlyContinue
+Stop-Process -Name "job-tracker" -ErrorAction SilentlyContinue
 ```
 
 This runs `scripts/build-sidecar.ps1`, which publishes the .NET project in Release config and renames the output with the Rust target triple (required by Tauri's sidecar naming convention).

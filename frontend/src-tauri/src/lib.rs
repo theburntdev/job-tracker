@@ -28,6 +28,11 @@ pub fn run() {
                 )?;
             }
 
+            // Kill any leftover sidecar from a previous session
+            let _ = std::process::Command::new("taskkill")
+                .args(["/F", "/IM", "JobTracker.Api.exe", "/T"])
+                .output();
+
             let data_dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&data_dir)?;
             let db_path = data_dir.join("jobtracker.db");
@@ -44,22 +49,22 @@ pub fn run() {
                 .spawn()?;
             app.manage(ApiSidecar(Mutex::new(Some(child))));
 
-            // Forward sidecar stdout/stderr to the Tauri log (visible in DevTools console)
+            // Forward sidecar stdout/stderr to a log file in app data dir
+            let log_path = data_dir.join("sidecar.log");
             tauri::async_runtime::spawn(async move {
+                use std::io::Write;
                 while let Some(event) = rx.recv().await {
-                    match event {
-                        CommandEvent::Stdout(line) => {
-                            log::info!("[api] {}", String::from_utf8_lossy(&line));
-                        }
-                        CommandEvent::Stderr(line) => {
-                            log::error!("[api] {}", String::from_utf8_lossy(&line));
-                        }
-                        CommandEvent::Terminated(status) => {
-                            log::warn!("[api] process exited: {:?}", status);
-                            break;
-                        }
-                        _ => {}
+                    let line = match &event {
+                        CommandEvent::Stdout(b) => format!("[out] {}\n", String::from_utf8_lossy(b)),
+                        CommandEvent::Stderr(b) => format!("[err] {}\n", String::from_utf8_lossy(b)),
+                        CommandEvent::Terminated(s) => format!("[terminated] {:?}\n", s),
+                        _ => continue,
+                    };
+                    log::info!("{}", line.trim());
+                    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(&log_path) {
+                        let _ = f.write_all(line.as_bytes());
                     }
+                    if matches!(event, CommandEvent::Terminated(_)) { break; }
                 }
             });
 
