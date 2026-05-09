@@ -15,6 +15,14 @@ impl Drop for ApiSidecar {
     }
 }
 
+fn kill_managed_sidecar(handle: &tauri::AppHandle) {
+    if let Ok(mut guard) = handle.state::<ApiSidecar>().0.lock() {
+        if let Some(child) = guard.take() {
+            let _ = child.kill();
+        }
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -71,17 +79,18 @@ pub fn run() {
             // Kill the sidecar when the terminal sends Ctrl+C (Rust's default exit skips Drop)
             let handle = app.handle().clone();
             ctrlc::set_handler(move || {
-                if let Ok(mut guard) = handle.state::<ApiSidecar>().0.lock() {
-                    if let Some(c) = guard.take() {
-                        let _ = c.kill();
-                    }
-                }
+                kill_managed_sidecar(&handle);
                 std::process::exit(0);
             })
             .ok();
 
             Ok(())
         })
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|handle, event| {
+            if matches!(event, tauri::RunEvent::ExitRequested { .. } | tauri::RunEvent::Exit) {
+                kill_managed_sidecar(handle);
+            }
+        });
 }
