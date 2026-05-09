@@ -11,7 +11,7 @@ const FormSchema = z.object({
   title: z.string().min(1, 'Required'),
   company: z.string().min(1, 'Required'),
   location: z.string().optional(),
-  url: z.string().optional(),
+  url: z.union([z.string().url('Must start with https:// or http://'), z.literal('')]).optional(),
   description: z.string().optional(),
   stage: Stage,
   appliedAt: z.string(),
@@ -182,6 +182,7 @@ export function CreateJobApplicationModal({
                 className={inputClass}
                 placeholder="https://..."
               />
+              {errors.url && <p className={errorClass}>{errors.url.message}</p>}
             </div>
             <div>
               <p className={labelClass}>Stage</p>

@@ -107,13 +107,26 @@ job-tracker/
 
 ## How the sidecar works
 
-Tauri registers `JobTracker.Api.exe` as an external binary. On app start, Tauri spawns it with `ASPNETCORE_URLS=http://localhost:5063`. On app exit, Tauri kills it. React talks to it via plain HTTP — no IPC, no changes to the React code needed.
+Tauri registers `JobTracker.Api.exe` as an external binary. On app start, Tauri spawns it and kills it on exit. React talks to it via plain HTTP — no IPC, no changes to the React code needed.
+
+Tauri passes these environment variables to the sidecar at launch:
+
+| Variable | Dev build (`cargo tauri dev`) | Release build (`cargo tauri build`) |
+|---|---|---|
+| `ASPNETCORE_URLS` | `http://localhost:5063` | `http://localhost:5063` |
+| `ASPNETCORE_ENVIRONMENT` | `Development` | `Production` |
+| `DB_PATH` | `%APPDATA%\com.burntdev.jobtracker\jobtracker.db` | `%APPDATA%\com.burntdev.jobtracker\jobtracker.db` |
+
+`ASPNETCORE_ENVIRONMENT=Production` in release builds hides the OpenAPI endpoint and applies the Tauri-specific CORS policy (`https://tauri.localhost`). You never need to set these manually — Tauri injects them automatically.
 
 The binary must be built and placed before running `cargo tauri dev` or `cargo tauri build`:
 
 ```powershell
 # From frontend/
 npm run build:sidecar
+
+# Run this if you get an error saying another process is hitting the API, run
+Stop-Process -Name "JobTracker.Api" -ErrorAction SilentlyContinue
 ```
 
 This runs `scripts/build-sidecar.ps1`, which publishes the .NET project in Release config and renames the output with the Rust target triple (required by Tauri's sidecar naming convention).
@@ -122,7 +135,16 @@ This runs `scripts/build-sidecar.ps1`, which publishes the .NET project in Relea
 
 ## Database
 
-SQLite file lives at the app's data directory (resolved at runtime by the API).
+SQLite file location depends on how you're running the app:
+
+| Scenario | Database file |
+|---|---|
+| VS / `dotnet watch` (UC1) | `backend/src/JobTracker.Api/jobtracker.db` (relative to working dir) |
+| Tauri desktop app (UC3) | `%APPDATA%\com.burntdev.jobtracker\jobtracker.db` |
+
+> **These are separate files.** Data added via the VS API will not appear in the desktop app and vice versa. This is intentional — the desktop app keeps user data isolated in the OS app-data folder.
+
+`DB_PATH` is set automatically by Tauri for the sidecar. When running from VS, no configuration is needed — the API falls back to the relative path.
 
 ### WAL mode and concurrent access
 

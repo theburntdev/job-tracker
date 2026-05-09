@@ -24,7 +24,7 @@ export default function JobApplicationsPage() {
     setPage(1)
   }
 
-  const { data, isLoading, error } = useJobApplications(page, sortField, sortDir)
+  const { data, isLoading, error, refetch } = useJobApplications(page, sortField, sortDir)
   const items = data?.items ?? []
   const filtered = useFilteredJobApplications(items)
   const totalPages = data ? Math.ceil(Number(data.total) / Number(data.pageSize)) : 1
@@ -58,7 +58,10 @@ export default function JobApplicationsPage() {
     <MainLayout>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-text-primary">Applications</h1>
-        <Button onClick={openCreateModal}>Add Application</Button>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={() => void refetch()} disabled={isLoading}>Refresh</Button>
+          <Button onClick={openCreateModal}>Add Application</Button>
+        </div>
       </div>
       <JobApplicationTable
         applications={filtered}

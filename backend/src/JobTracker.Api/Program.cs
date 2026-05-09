@@ -37,13 +37,24 @@ try
     builder.Services.ConfigureHttpJsonOptions(options =>
         options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+    var dbPath = Environment.GetEnvironmentVariable("DB_PATH");
+    if (!string.IsNullOrEmpty(dbPath))
+        builder.Configuration["ConnectionStrings:Default"] = $"Data Source={dbPath}";
+
     builder.Services.AddInfrastructure(builder.Configuration);
 
     builder.Services.AddCors(options =>
+    {
         options.AddPolicy("Dev", policy =>
             policy.WithOrigins("http://localhost:5173")
                   .AllowAnyHeader()
-                  .AllowAnyMethod()));
+                  .AllowAnyMethod());
+
+        options.AddPolicy("Tauri", policy =>
+            policy.WithOrigins("https://tauri.localhost", "tauri://localhost")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod());
+    });
 
     var app = builder.Build();
 
@@ -54,11 +65,11 @@ try
     }
 
     app.UseExceptionHandler();
+    app.UseCors(app.Environment.IsDevelopment() ? "Dev" : "Tauri");
 
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
-        app.UseCors("Dev");
     }
 
     app.MapJobApplicationEndpoints();

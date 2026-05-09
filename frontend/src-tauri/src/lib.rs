@@ -1,10 +1,19 @@
 use std::sync::Mutex;
 use tauri::Manager;
-use tauri_plugin_shell::process::CommandChild;
+use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 
-#[allow(dead_code)]
-struct ApiSidecar(Mutex<CommandChild>);
+struct ApiSidecar(Mutex<Option<CommandChild>>);
+
+impl Drop for ApiSidecar {
+    fn drop(&mut self) {
+        if let Ok(mut guard) = self.0.lock() {
+            if let Some(child) = guard.take() {
+                let _ = child.kill();
+            }
+        }
+    }
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -19,13 +28,52 @@ pub fn run() {
                 )?;
             }
 
-            let (_rx, child) = app
+            let data_dir = app.path().app_data_dir()?;
+            std::fs::create_dir_all(&data_dir)?;
+            let db_path = data_dir.join("jobtracker.db");
+
+            let (mut rx, child) = app
                 .shell()
                 .sidecar("JobTracker.Api")?
                 .env("ASPNETCORE_URLS", "http://localhost:5063")
-                .env("ASPNETCORE_ENVIRONMENT", "Development")
+                .env(
+                    "ASPNETCORE_ENVIRONMENT",
+                    if cfg!(debug_assertions) { "Development" } else { "Production" },
+                )
+                .env("DB_PATH", db_path.to_str().unwrap_or("jobtracker.db"))
                 .spawn()?;
-            app.manage(ApiSidecar(Mutex::new(child)));
+            app.manage(ApiSidecar(Mutex::new(Some(child))));
+
+            // Forward sidecar stdout/stderr to the Tauri log (visible in DevTools console)
+            tauri::async_runtime::spawn(async move {
+                while let Some(event) = rx.recv().await {
+                    match event {
+                        CommandEvent::Stdout(line) => {
+                            log::info!("[api] {}", String::from_utf8_lossy(&line));
+                        }
+                        CommandEvent::Stderr(line) => {
+                            log::error!("[api] {}", String::from_utf8_lossy(&line));
+                        }
+                        CommandEvent::Terminated(status) => {
+                            log::warn!("[api] process exited: {:?}", status);
+                            break;
+                        }
+                        _ => {}
+                    }
+                }
+            });
+
+            // Kill the sidecar when the terminal sends Ctrl+C (Rust's default exit skips Drop)
+            let handle = app.handle().clone();
+            ctrlc::set_handler(move || {
+                if let Ok(mut guard) = handle.state::<ApiSidecar>().0.lock() {
+                    if let Some(c) = guard.take() {
+                        let _ = c.kill();
+                    }
+                }
+                std::process::exit(0);
+            })
+            .ok();
 
             Ok(())
         })
