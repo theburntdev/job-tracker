@@ -5,6 +5,7 @@ using JobTracker.Api.Endpoints;
 using JobTracker.Application.Common;
 using JobTracker.Application.JobApplications.GetJobApplications;
 using JobTracker.Infrastructure;
+using JobTracker.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -65,14 +66,31 @@ try
     }
 
     app.UseExceptionHandler();
-    app.UseCors(app.Environment.IsDevelopment() ? "Dev" : "Tauri");
+
+    // Testing env also needs the Dev CORS policy (Vite on 5173)
+    app.UseCors(
+        app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Testing")
+            ? "Dev"
+            : "Tauri");
 
     if (app.Environment.IsDevelopment())
     {
         app.MapOpenApi();
     }
 
+    app.MapGet("/health", () => Results.Ok());
+
     app.MapJobApplicationEndpoints();
+
+    // Test-only endpoint — wipes all job applications for per-test isolation
+    if (app.Environment.IsEnvironment("Testing"))
+    {
+        app.MapDelete("/api/test/reset", async (AppDbContext db) =>
+        {
+            await db.JobApplications.ExecuteDeleteAsync();
+            return Results.NoContent();
+        });
+    }
 
     app.Run();
 }
