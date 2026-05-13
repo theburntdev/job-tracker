@@ -8,6 +8,7 @@ export default mergeConfig(
       environment: 'jsdom',
       globals: true,
       setupFiles: ['./src/test-setup.ts'],
+      exclude: ['**/node_modules/**', '**/e2e/**'],
       env: {
         VITE_API_URL: 'http://localhost:5000',
       },
