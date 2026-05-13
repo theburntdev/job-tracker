@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "gen:api": "openapi-typescript http://localhost:5063/openapi/v1.json -o ./src/lib/api.types.gen.ts",
     "build:sidecar": "powershell -ExecutionPolicy Bypass -File ../scripts/build-sidecar.ps1"
   },
@@ -27,6 +29,7 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@tailwindcss/vite": "^4.0.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
