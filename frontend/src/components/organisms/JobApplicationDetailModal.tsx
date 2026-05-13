@@ -212,7 +212,7 @@ export function JobApplicationDetailModal({
           {/* description */}
           <div className="flex min-h-0 flex-1 flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label className={labelClass}>Description</label>
+              <label className={labelClass} htmlFor="detail-description">Description</label>
               <button
                 type="button"
                 onClick={handleCopy}
@@ -256,6 +256,7 @@ export function JobApplicationDetailModal({
               </button>
             </div>
             <textarea
+              id="detail-description"
               className="min-h-0 flex-1 w-full resize-none rounded border border-border bg-surface-elevated px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
