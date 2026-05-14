@@ -187,3 +187,9 @@ npm run gen:api
 ```
 
 Commits the updated `src/lib/api.types.gen.ts` so CI typechecks pass without needing the backend running.
+
+# One-time setup for E2E tests
+```powershell
+echo "VITE_API_URL=http://localhost:5001" > frontend/.env.e2e
+```
+or manually create a .env.e2e file
