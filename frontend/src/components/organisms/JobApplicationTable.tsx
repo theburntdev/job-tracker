@@ -2,6 +2,7 @@ import { Spinner } from '../atoms/Spinner'
 import { StageDropdown } from '../molecules/StageDropdown'
 import { type JobApplication, type Stage } from '../../features/job-applications/types'
 import { type SortField, type SortDir } from '../../stores/useJobStore'
+import logo from '../../assets/JobTracker.png'
 
 interface JobApplicationTableProps {
   applications: JobApplication[]
@@ -57,9 +58,10 @@ export function JobApplicationTable({
 
   if (applications.length === 0) {
     return (
-      <p className="p-8 text-center text-text-muted">
-        No applications yet. Add one to get started.
-      </p>
+      <div className="flex flex-col items-center gap-4 p-16 text-text-muted">
+        <img src={logo} alt="" className="h-40 w-40 opacity-40" />
+        <p>No applications yet. Add one to get started.</p>
+      </div>
     )
   }
 
