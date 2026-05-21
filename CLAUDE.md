@@ -42,3 +42,17 @@ When you're working in a subdirectory, Claude has all three in context automatic
 
 ## Future milestones
 - **MCP server** (`JobTracker.Mcp`): a .NET MCP server exposing job/application data to Claude Desktop via stdio. Reuses `Infrastructure` layer against the same SQLite file.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical label strings (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout — `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
