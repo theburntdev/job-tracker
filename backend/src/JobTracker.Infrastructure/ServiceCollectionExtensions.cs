@@ -1,3 +1,4 @@
+using JobTracker.Application.Activities;
 using JobTracker.Application.Common;
 using JobTracker.Application.JobApplications;
 using JobTracker.Infrastructure.Interceptors;
@@ -20,6 +21,7 @@ public static class ServiceCollectionExtensions
                 .AddInterceptors(new WalModeInterceptor()));
 
         services.AddScoped<IJobApplicationRepository, JobApplicationRepository>();
+        services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;

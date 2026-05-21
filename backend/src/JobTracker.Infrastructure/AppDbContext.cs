@@ -9,9 +9,11 @@ public sealed class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<JobApplication> JobApplications => Set<JobApplication>();
+    public DbSet<Activity> Activities => Set<Activity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new JobApplicationConfiguration());
+        modelBuilder.ApplyConfiguration(new ActivityConfiguration());
     }
 }
