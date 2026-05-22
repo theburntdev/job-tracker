@@ -47,7 +47,7 @@ try
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("Dev", policy =>
-            policy.WithOrigins("http://localhost:5173")
+            policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
                   .AllowAnyHeader()
                   .AllowAnyMethod());
 
@@ -81,6 +81,7 @@ try
     app.MapGet("/health", () => Results.Ok());
 
     app.MapJobApplicationEndpoints();
+    app.MapActivityEndpoints();
 
     // Test-only endpoint — wipes all job applications for per-test isolation
     if (app.Environment.IsEnvironment("Testing"))
@@ -102,3 +103,5 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+public partial class Program { }
