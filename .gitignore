@@ -43,3 +43,4 @@ frontend/.env.e2e
 frontend/e2e/.api-pid
 frontend/playwright-report/
 frontend/test-results/
+node_modules/

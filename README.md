@@ -48,36 +48,32 @@ The app window opens. The .NET API starts automatically in the background on `ht
 
 ## Daily dev workflow
 
+All commands run from repo root:
+
 ```powershell
-# From frontend/ — start everything:
-cargo tauri dev
+npm run backend      # API only (http://localhost:5063)
+npm run frontend     # Vite dev server only (http://localhost:5173)
+npm run dev          # backend + frontend concurrently (one terminal)
+npm run dev:split    # backend + frontend in split Windows Terminal panes
+npm run tauri        # full desktop window (Vite + Tauri, no sidecar)
 
-# Frontend only (no native window, browser at http://localhost:5173):
-npm run dev
+npm run test:backend # all .NET test projects
+npm run test:frontend # Vitest single pass
+npm run test         # both
 
-# Re-build the sidecar after backend changes:
-npm run build:sidecar
+npm run gen:api      # regenerate TypeScript API types (API must be running)
 ```
-
-### Backend only (no Tauri)
 
 > **Port conflict:** The sidecar and Visual Studio both bind to `:5063`. Only one can run at a time. Close the Tauri desktop app before launching the API in Visual Studio — app exit kills the sidecar automatically.
 
-```powershell
-# From repo root — hot reload:
-dotnet watch --project backend/src/JobTracker.Api
+> **Sidecar:** After backend changes, rebuild before running Tauri: `cd frontend && npm run build:sidecar`
 
-# Run all tests:
-dotnet test backend/JobTracker.sln
-```
-
-### Frontend only
+### Frontend (from `frontend/`)
 
 ```powershell
-# From frontend/
-npm run typecheck    # type check
-npm test             # Vitest watch mode
-npm run test:run     # single pass (CI)
+npm run typecheck    # type check without running tests
+npm test             # Vitest watch mode (active development)
+npm run test:run     # Vitest single pass (CI)
 ```
 
 ---
