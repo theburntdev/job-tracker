@@ -2,6 +2,9 @@ import { setupServer } from 'msw/node'
 import { http, HttpResponse } from 'msw'
 
 export const server = setupServer(
+  http.get(/\/api\/activities/, () =>
+    HttpResponse.json({ items: [], total: 0, pageNumber: 1, pageSize: 20 }),
+  ),
   http.get(/\/api\/job-applications/, () =>
     HttpResponse.json({ items: [], total: 0, pageNumber: 1, pageSize: 20 }),
   ),

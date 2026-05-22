@@ -4,6 +4,44 @@
  */
 
 export interface paths {
+    "/api/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    page?: number | string;
+                    pageSize?: number | string;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PageOfActivityResponse"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/job-applications": {
         parameters: {
             query?: never;
@@ -127,6 +165,33 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ActivityResponse: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobApplicationId: string;
+            jobTitle: null | string;
+            company: null | string;
+            activityType: components["schemas"]["ActivityType"];
+            /** Format: date-time */
+            occurredAt: string;
+            contactName: null | string;
+            contactEmail: null | string;
+            notes: null | string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        /** @enum {unknown} */
+        ActivityType: "Applied" | "PhoneScreen" | "Interview" | "Offer" | "Rejected" | "Withdrew" | "EmailedRecruiter" | "CalledRecruiter";
+        PageOfActivityResponse: {
+            items: components["schemas"]["ActivityResponse"][];
+            /** Format: int32 */
+            total: number | string;
+            /** Format: int32 */
+            pageNumber: number | string;
+            /** Format: int32 */
+            pageSize: number | string;
+        };
         CreateJobApplicationRequest: {
             title: string;
             company: string;
