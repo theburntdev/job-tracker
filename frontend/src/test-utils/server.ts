@@ -17,4 +17,7 @@ export const server = setupServer(
   http.delete(/\/api\/job-applications/, () =>
     new HttpResponse(null, { status: 204 }),
   ),
+  http.post(/\/api\/activities/, () =>
+    HttpResponse.json(null, { status: 201 }),
+  ),
 )
