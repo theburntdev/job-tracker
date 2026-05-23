@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useJobApplications, useUpdateJobApplication, useCreateJobApplication, useDeleteJobApplication } from '../features/job-applications/api'
+import { useCreateActivity } from '../features/activities/api'
 import { useFilteredJobApplications } from '../features/job-applications/hooks'
 import { type JobApplication, type Stage } from '../features/job-applications/types'
 import { useJobStore, type SortField, type SortDir } from '../stores/useJobStore'
@@ -37,6 +38,7 @@ export default function JobApplicationsPage() {
   const { mutate: updateJob, isPending: isUpdating } = useUpdateJobApplication()
   const { mutate: createJob, isPending: isCreating } = useCreateJobApplication()
   const { mutate: deleteJob, isPending: isDeleting } = useDeleteJobApplication()
+  const { mutate: createActivity, isPending: isLoggingActivity } = useCreateActivity()
 
   const selectedJob = items.find((app) => app.id === selectedJobId) ?? null
 
@@ -98,8 +100,10 @@ export default function JobApplicationsPage() {
           onDelete={() => {
             deleteJob(selectedJob.id, { onSuccess: () => selectJob(null) })
           }}
+          onLogActivity={(input) => createActivity(input)}
           isSaving={isUpdating}
           isDeleting={isDeleting}
+          isLoggingActivity={isLoggingActivity}
         />
       )}
       {isCreateModalOpen && (

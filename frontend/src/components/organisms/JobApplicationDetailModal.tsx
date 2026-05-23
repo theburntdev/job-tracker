@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { Button } from '../atoms/Button'
 import { type JobApplication, Stage } from '../../features/job-applications/types'
+import type { CreateActivityInput } from '../../features/activities/types'
 import { StatusBadge } from '../molecules/StatusBadge'
 import { cn } from '../../lib/cn'
+import { LogActivityModal } from './LogActivityModal'
 
 interface SaveData {
   stage: Stage
@@ -14,8 +16,10 @@ interface JobApplicationDetailModalProps {
   onClose: () => void
   onSave: (data: SaveData) => void
   onDelete: () => void
+  onLogActivity: (input: CreateActivityInput) => void
   isSaving: boolean
   isDeleting?: boolean
+  isLoggingActivity?: boolean
 }
 
 export function JobApplicationDetailModal({
@@ -23,14 +27,17 @@ export function JobApplicationDetailModal({
   onClose,
   onSave,
   onDelete,
+  onLogActivity,
   isSaving,
   isDeleting = false,
+  isLoggingActivity = false,
 }: JobApplicationDetailModalProps) {
   const [stage, setStage] = useState<Stage>(application.stage)
   const [description, setDescription] = useState(application.description ?? '')
   const [copied, setCopied] = useState(false)
   const [stageOpen, setStageOpen] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [logActivityOpen, setLogActivityOpen] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -288,6 +295,14 @@ export function JobApplicationDetailModal({
             </Button>
           )}
           <div className="flex items-center gap-3">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setLogActivityOpen(true)}
+              disabled={isSaving || isDeleting}
+            >
+              Log Activity
+            </Button>
             <Button variant="secondary" onClick={onClose} disabled={isSaving || isDeleting}>
               Cancel
             </Button>
@@ -297,6 +312,17 @@ export function JobApplicationDetailModal({
           </div>
         </div>
       </div>
+      {logActivityOpen && (
+        <LogActivityModal
+          jobApplicationId={application.id}
+          onClose={() => setLogActivityOpen(false)}
+          onSubmit={(input) => {
+            onLogActivity(input)
+            setLogActivityOpen(false)
+          }}
+          isSaving={isLoggingActivity}
+        />
+      )}
     </div>
   )
 }

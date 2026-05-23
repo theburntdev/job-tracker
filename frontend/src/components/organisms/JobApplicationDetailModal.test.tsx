@@ -12,6 +12,7 @@ const defaultProps = {
   onClose: vi.fn(),
   onSave: vi.fn(),
   onDelete: vi.fn(),
+  onLogActivity: vi.fn(),
   isSaving: false,
 }
 
@@ -97,5 +98,17 @@ describe('JobApplicationDetailModal', () => {
     await user.click(cancelButtons[0])
     expect(onDelete).not.toHaveBeenCalled()
     expect(screen.queryByText(/delete this application\?/i)).not.toBeInTheDocument()
+  })
+
+  it('renders "Log Activity" button in the footer', () => {
+    render(<JobApplicationDetailModal {...defaultProps} />)
+    expect(screen.getByRole('button', { name: /log activity/i })).toBeInTheDocument()
+  })
+
+  it('opens LogActivityModal when "Log Activity" button clicked', async () => {
+    const user = userEvent.setup()
+    render(<JobApplicationDetailModal {...defaultProps} />)
+    await user.click(screen.getByRole('button', { name: /log activity/i }))
+    expect(screen.getByRole('dialog', { name: /log activity/i })).toBeInTheDocument()
   })
 })
