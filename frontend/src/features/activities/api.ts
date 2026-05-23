@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 import type { components } from '../../lib/api.types.gen'
 import { apiClient } from '../../lib/apiClient'
-import { ActivitySchema } from './types'
+import { ActivitySchema, type CreateActivityInput } from './types'
 
 const QUERY_KEY = ['activities'] as const
 
@@ -14,6 +14,17 @@ const PageSchema: z.ZodType<BackendPage> = z.object({
   pageNumber: z.union([z.number(), z.string()]),
   pageSize: z.union([z.number(), z.string()]),
 })
+
+export function useCreateActivity() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (input: CreateActivityInput) =>
+      apiClient.post<unknown>('/api/activities', input),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+    },
+  })
+}
 
 export function useActivities(page = 1, pageSize = 20) {
   return useQuery({

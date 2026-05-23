@@ -35,7 +35,31 @@ export interface paths {
             };
         };
         put?: never;
-        post?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["CreateActivityRequest"];
+                };
+            };
+            responses: {
+                /** @description Created */
+                201: {
+                    headers: {
+                        Location?: string;
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ActivityResponse"];
+                    };
+                };
+            };
+        };
         delete?: never;
         options?: never;
         head?: never;
@@ -191,6 +215,17 @@ export interface components {
             pageNumber: number | string;
             /** Format: int32 */
             pageSize: number | string;
+        };
+        CreateActivityRequest: {
+            /** Format: uuid */
+            jobApplicationId: string;
+            activityType: components["schemas"]["ActivityType"];
+            /** Format: date-time */
+            occurredAt: string;
+            contactName?: string | null;
+            contactEmail?: string | null;
+            notes?: string | null;
+            newStage?: components["schemas"]["Stage"] | null;
         };
         CreateJobApplicationRequest: {
             title: string;

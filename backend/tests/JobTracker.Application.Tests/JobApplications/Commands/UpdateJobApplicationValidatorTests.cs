@@ -144,9 +144,9 @@ public sealed class UpdateJobApplicationValidatorTests
     }
 
     [Fact]
-    public async Task Validate_GivenDescriptionExceeds5000Chars_ThenIsInvalid()
+    public async Task Validate_GivenDescriptionExceeds9000Chars_ThenIsInvalid()
     {
-        var cmd = ValidCommand() with { Description = new string('x', 5001) };
+        var cmd = ValidCommand() with { Description = new string('x', 9001) };
 
         var result = await _validator.ValidateAsync(cmd);
 
@@ -155,9 +155,9 @@ public sealed class UpdateJobApplicationValidatorTests
     }
 
     [Fact]
-    public async Task Validate_GivenDescriptionExactly5000Chars_ThenIsValid()
+    public async Task Validate_GivenDescriptionExactly9000Chars_ThenIsValid()
     {
-        var cmd = ValidCommand() with { Description = new string('x', 5000) };
+        var cmd = ValidCommand() with { Description = new string('x', 9000) };
 
         var result = await _validator.ValidateAsync(cmd);
 

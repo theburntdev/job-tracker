@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace JobTracker.Api.Tests.ActivityEndpoints;
 
+[Collection("ApiIntegration")]
 public sealed class GetActivitiesEndpointTests : IAsyncLifetime
 {
     private JobTrackerApiFactory _factory = null!;
