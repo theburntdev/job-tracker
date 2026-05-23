@@ -10,7 +10,9 @@
     "test:backend": "dotnet test backend/tests/JobTracker.Domain.Tests && dotnet test backend/tests/JobTracker.Application.Tests && dotnet test backend/tests/JobTracker.Infrastructure.Tests && dotnet test backend/tests/JobTracker.Api.Tests",
     "test:frontend": "npm run test --prefix frontend",
     "test": "npm run test:backend && npm run test:frontend",
-    "gen:api": "npm run gen:api --prefix frontend"
+    "gen:api": "npm run gen:api --prefix frontend",
+    "start-issue": "powershell -File scripts/start-issue.ps1",
+    "close-issue": "powershell -File scripts/close-issue.ps1"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
