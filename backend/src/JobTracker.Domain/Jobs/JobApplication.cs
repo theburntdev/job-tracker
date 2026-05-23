@@ -18,6 +18,12 @@ public sealed class JobApplication
 
     private JobApplication() { }
 
+    public void UpdateStage(Stage stage)
+    {
+        Stage = stage;
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
     public void Update(
         string title,
         string company,

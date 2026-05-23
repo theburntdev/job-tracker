@@ -1,7 +1,9 @@
 import { z } from 'zod'
 import type { components } from '../../lib/api.types.gen'
+import { Stage } from '../job-applications/types'
 
 type BackendActivityResponse = components['schemas']['ActivityResponse']
+type BackendCreateActivityRequest = components['schemas']['CreateActivityRequest']
 
 export const ActivityType = z.enum([
   'Applied',
@@ -29,3 +31,15 @@ export const ActivitySchema = z.object({
 }) satisfies z.ZodType<BackendActivityResponse>
 
 export type Activity = z.infer<typeof ActivitySchema>
+
+export const CreateActivityInputSchema = z.object({
+  jobApplicationId: z.string().uuid(),
+  activityType: ActivityType,
+  occurredAt: z.string(),
+  contactName: z.string().nullable().optional(),
+  contactEmail: z.string().nullable().optional(),
+  notes: z.string().nullable().optional(),
+  newStage: Stage.nullable().optional(),
+}) satisfies z.ZodType<BackendCreateActivityRequest>
+
+export type CreateActivityInput = z.infer<typeof CreateActivityInputSchema>
