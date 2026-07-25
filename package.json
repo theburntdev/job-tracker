@@ -15,6 +15,6 @@
     "close-issue": "powershell -File scripts/close-issue.ps1"
   },
   "devDependencies": {
-    "concurrently": "^9.0.0"
+    "concurrently": "^9.2.4"
   }
 }
